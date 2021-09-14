@@ -1,10 +1,11 @@
 const express = require('express');
 const expressGraphQL = require('express-graphql').graphqlHTTP;
-
+const schema = require('./schema/schema');
 
 const app = express();
 // verifico che la chiamata sia fatta su graphql
 app.use('/graphql', expressGraphQL({
+    schema,
     graphiql: true
 }));
 
