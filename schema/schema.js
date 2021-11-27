@@ -25,9 +25,10 @@ const UserType = new GraphQLObjectType({
     age: { type: GraphQLInt },
     company: {
       type: CompanyType,
-      resolve(parent, args) {
+      resolve(parentNode, args) {
+        // parentNode è il nodo (insieme di dati/tabella) sul grafico da cui proviene la query. Ad esempio l'utente con id 23...
         return axios
-          .get(`http://localhost:3000/companies/${parent.companyId}`)
+          .get(`http://localhost:3000/companies/${parentNode.companyId}`)
           .then((res) => res.data);
       },
     },
@@ -35,7 +36,7 @@ const UserType = new GraphQLObjectType({
 });
 
 /*
- *node server.js --- localhost:4000/graphql
+ *node server.js --- localhost:4000/graphql  -->npm run dev
  *npm run json:server
  *A livello piu alto di ogni server GraphQL c'è un type che rappresenta tutti i possibili punti di
  *di ingresso nell'API GraphQL, chiamato RootQuery spesso. Nel mio esempio la RootQuery fornisce
@@ -50,15 +51,28 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
+    // ENTRY POINT 1
     user: {
       type: UserType,
       args: { id: { type: GraphQLString } },
       // va nel DB, cerca i dati che mi servono e me li ritorna
+      //le resolve function ci portano da un punto del nostro graph (grafico) ad un'altra posizione sul grafico.
+      //sono una serie di funzioni che restituiscono riferimenti ad altri oggetti (altri pezzi di dati, legate con fk) nel nostro graph or schema
       resolve(parentValue, args) {
         // return _.find(users, { id: args.id });
         return axios
           .get(`http://localhost:3000/users/${args.id}`)
           .then((resp) => resp.data);
+      },
+    },
+    // ENTRY POINT 2
+    company: {
+      type: CompanyType,
+      args: { id: { type: GraphQLString } },
+      resolve(parentNode, args) {
+        return axios
+          .get(`http://localhost:3000/companies/${args.id}`)
+          .then((res) => res.data);
       },
     },
   },
