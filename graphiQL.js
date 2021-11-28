@@ -43,6 +43,8 @@ fragment companyDetails on Company {
   description
 }
 
+
+// MUTATIONS
 mutation createUser($firstName: String!, $age: Int!) {
   addUser(firstName: $firstName, age: $age) {
     id
@@ -57,6 +59,17 @@ mutation deleteUser($deleteUserId: String!) {
   }
 }
 
+mutation updateUser($updateUserId: String!, $firstName: String, $companyId: String) {
+  editUser(id: $updateUserId, firstName: $firstName, companyId: $companyId) {
+    id
+    age
+    firstName
+    company {
+      name
+    }
+  }
+}
+
 
   
 
@@ -67,7 +80,9 @@ mutation deleteUser($deleteUserId: String!) {
   "id2": "2",
   "firstName": "Arnold",
   "age": 31,
-  "deleteUserId": "8liC4VQ"
+  "deleteUserId": "8liC4VQ",
+  "updateUserId": "2",
+  "companyId": "1"
 }
   
 `;
