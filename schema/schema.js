@@ -5,6 +5,7 @@ const {
   GraphQLInt,
   GraphQLSchema,
   GraphQLList,
+  GraphQLNonNull,
 } = graphql;
 const _ = require("lodash");
 const axios = require("axios");
@@ -62,6 +63,7 @@ const UserType = new GraphQLObjectType({
  *L'oggetto user trovato, viene poi restituito/ritornato dalla funzione resolve()
  */
 
+// RootQuery
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
@@ -92,6 +94,30 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+// RootMutations
+const RootMutation = new GraphQLObjectType({
+  name: "RootMutationsType",
+  fields: {
+    //mutation name (es. addUser)
+    addUser: {
+      //tipo di record che la resolve fn mi ritornerà
+      type: UserType,
+      //argomenti passati e che a sua volta vengono dati alla resolve fn
+      args: {
+        firstName: { type: new graphql.GraphQLNonNull(GraphQLString) },
+        age: { type: new graphql.GraphQLNonNull(GraphQLInt) },
+        companyId: { type: GraphQLString },
+      },
+      resolve(parentValue, { firstName, age }) {
+        return axios
+          .post("http://localhost:3000/users", { firstName, age })
+          .then((res) => res.data);
+      },
+    },
+  },
+});
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: RootMutation,
 });
