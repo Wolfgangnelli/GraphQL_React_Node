@@ -102,15 +102,24 @@ const RootMutation = new GraphQLObjectType({
     addUser: {
       //tipo di record che la resolve fn mi ritornerà
       type: UserType,
-      //argomenti passati e che a sua volta vengono dati alla resolve fn
+      //argomenti passati (input) e che a sua volta vengono dati alla resolve fn
       args: {
-        firstName: { type: new graphql.GraphQLNonNull(GraphQLString) },
-        age: { type: new graphql.GraphQLNonNull(GraphQLInt) },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
         companyId: { type: GraphQLString },
       },
       resolve(parentValue, { firstName, age }) {
         return axios
           .post("http://localhost:3000/users", { firstName, age })
+          .then((res) => res.data);
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: { id: { type: new GraphQLNonNull(GraphQLString) } },
+      resolve(parentValue, { id }) {
+        return axios
+          .delete(`http://localhost:3000/users/${id}`)
           .then((res) => res.data);
       },
     },
