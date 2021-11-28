@@ -51,6 +51,13 @@ mutation createUser($firstName: String!, $age: Int!) {
   }
 }
 
+mutation deleteUser($deleteUserId: String!) {
+  deleteUser(id: $deleteUserId) {
+    id
+  }
+}
+
+
   
 
 //  QUERY VARIABLES
@@ -59,7 +66,8 @@ mutation createUser($firstName: String!, $age: Int!) {
   "id1": "1",
   "id2": "2",
   "firstName": "Arnold",
-  "age": 31
+  "age": 31,
+  "deleteUserId": "8liC4VQ"
 }
   
 `;
